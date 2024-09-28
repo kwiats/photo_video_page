@@ -8,9 +8,9 @@
     <ul>
         {% for media in media_files %}
             <li>
-                <strong>{{ media.title }}</strong> -
+                <strong>{{ media.title }} ( {{ media.uuid }} )</strong> -
                 {% if media.file_type == 'image' %}
-                    <img src="{{ media.file.url }}" alt="{{ media.title }}" style="max-width: 200px;">
+                    <img src="{{ media.file.url }}" alt="{{ media.title }}" style="max-width: 500px;">
                 {% elif media.file_type == 'video' %}
                     <video width="320" height="240" controls>
                         <source src="{{ media.file.url }}" type="video/mp4">

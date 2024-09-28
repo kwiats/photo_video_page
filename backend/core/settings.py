@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", '').split(',')
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", 'localhost').split(',')
 
 # Application definition
 
@@ -139,8 +139,8 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 SIMPLE_HISTORY_FILEFIELD_TO_CHARFIELD = True
 
-MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", 'mCWDfuW7nJ2dkS14psfE')
-MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", 'pMSp1ilz8RD2A8cw5QEGdYNb48Skbm9rxJvG2ivw')
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", '3ZlW8xTkeINu1VmNI0nl')
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", 'KhzoD8UZS7FWPntLy11JxWuyXeYTPdmiSRbnas4i')
 MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME", 'photos')
 MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "http://localhost:9000")
 

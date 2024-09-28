@@ -1,6 +1,6 @@
 from django import forms
 
-from backend.portfolio.models import MediaFile
+from portfolio.models import MediaFile
 
 
 class MediaFileForm(forms.ModelForm):

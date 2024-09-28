@@ -13,7 +13,7 @@ class MediaFile(CommonModel):
     title = models.CharField(max_length=255)
     file_type = models.CharField(max_length=5, choices=MEDIA_TYPE_CHOICES)
     file = models.FileField(upload_to=upload_to)
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+    is_public = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
