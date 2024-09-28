@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: local_postgres
+    env_file:
+      - ./.envs/postgres.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    container_name: local_django
+    build:
+      context: .
+      dockerfile: ./backend/docker/Dockerfile
+    env_file:
+      - ./.envs/django.env
+    volumes:
+      - ./backend:/src/backend:Z
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - minio
+      - createbuckets
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio
+    hostname: "minio"
+    volumes:
+      - ./minio:/minio_files
+    env_file:
+      - ./.envs/minio.env
+    command: 'minio server /minio_files --console-address ":9001"'
+    ports:
+      - 9000:9000
+      - 9001:9001
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    env_file:
+      - ./.envs/minio.env
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+      /usr/bin/mc mb --quiet myminio/photos;
+      /usr/bin/mc policy set none myminio/photos;
+      "
+volumes:
+  postgres_data:
