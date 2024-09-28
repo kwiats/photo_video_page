@@ -5,7 +5,7 @@ services:
     image: postgres:latest
     container_name: local_postgres
     env_file:
-      - ./.envs/postgres.env
+      - backend/.envs/postgres.env
     ports:
       - "5432:5432"
     volumes:
@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: ./backend/docker/Dockerfile
     env_file:
-      - ./.envs/django.env
+      - backend/.envs/django.env
     volumes:
       - ./backend:/src/backend:Z
     ports:
@@ -35,7 +35,7 @@ services:
     volumes:
       - ./minio:/minio_files
     env_file:
-      - ./.envs/minio.env
+      - backend/.envs/minio.env
     command: 'minio server /minio_files --console-address ":9001"'
     ports:
       - 9000:9000
@@ -46,7 +46,7 @@ services:
     depends_on:
       - minio
     env_file:
-      - ./.envs/minio.env
+      - backend/.envs/minio.env
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
