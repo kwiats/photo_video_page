@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 from portfolio.filters import MediaPositionFilter
 from portfolio.models import MediaFile, MediaPosition
 from portfolio.serializers import MediaFileSerializer, MediaPositionSerializer
+from portfolio.task_runner import compress_media_runner
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +121,7 @@ class MediaFileView(APIView):
 
         if not processed_file:
             logger.info(f"File not processed yet for UUID {uuid}. Starting compression.")
-            # compress_media_runner(media_file.pk, resolution, quality)
+            compress_media_runner(media_file.pk, resolution, quality)
             return JsonResponse({"message": "The media file is being processed. Please try again later."},
                                 status=status.HTTP_202_ACCEPTED)
 
