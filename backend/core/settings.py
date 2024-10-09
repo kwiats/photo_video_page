@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv(
-    'DJANGO_SECRET_KEY', "django-insecure-wu*-bz_&9)ema4f*-0r_5%zxg!mavny(2d2oiz7y-h0iz2a%6=")
+    'DJANGO_SECRET_KEY', "")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", 'True') == 'True'
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", '127.0.0.1,localhost,100.42.176.190').split(',')
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", '').split(',')
 
 # Application definition
 
@@ -225,13 +225,8 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 #     }
 CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL_ORIGINS", 'True') == 'True'
 
-CORS_ALLOWED_ORIGINS = [
-    "http://100.42.176.190:4200",
-    "http://localhost:4200",
-    "http://127.0.0.1:4200",
-    "http://0.0.0.0:4200",
-]
-CORS_ORIGIN_WHITELIST = ('127.0.0.1', 'localhost', '0.0.0.0', '100.42.176.190')
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ORIGIN_WHITELIST = os.environ.get('CORS_ORIGIN_WHITELIST', '').split(',')
 
 CORS_ALLOW_METHODS = [
     'DELETE',
