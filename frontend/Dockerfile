@@ -11,7 +11,7 @@ COPY ./frontend /src/frontend
 
 WORKDIR /src/frontend
 
-RUN npm run build
+RUN npm run build -- --configuration=production
 
 RUN ls -la /src/frontend/dist/portfolio
 
