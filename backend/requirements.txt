@@ -16,3 +16,5 @@ django-celery-results
 celery
 redis
 django-redis
+ffmpeg-python
+psycopg2
