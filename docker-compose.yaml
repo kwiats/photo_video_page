@@ -3,7 +3,7 @@ version: '3.9'
 services:
   db:
     image: postgres:latest
-    container_name: local_postgres
+    container_name: postgres
     env_file:
       - backend/.envs/postgres.env
     ports:
@@ -14,13 +14,13 @@ services:
 
   redis:
     image: redis:latest
-    container_name: local_redis
+    container_name: redis
     ports:
       - "6379:6379"
     restart: unless-stopped
 
   backend:
-    container_name: local_django
+    container_name: django
     build:
       context: .
       dockerfile: ./backend/Dockerfile
@@ -33,33 +33,39 @@ services:
     depends_on:
       - db
       - redis
-      - minio
-      - createbuckets
     restart: unless-stopped
 
-  minio:
-    image: minio/minio
-    hostname: "minio"
-    volumes:
-      - ./minio:/minio_files
-    env_file:
-      - backend/.envs/minio.env
-    command: 'minio server /minio_files --console-address ":9001"'
+  angular:
+    container_name: angular
+    build:
+      context: .
+      dockerfile: ./frontend/Dockerfile
     ports:
-      - 9000:9000
-      - 9001:9001
-
-  createbuckets:
-    image: minio/mc
-    depends_on:
-      - minio
-    env_file:
-      - backend/.envs/minio.env
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
-      /usr/bin/mc mb --quiet myminio/photos;
-      /usr/bin/mc policy set none myminio/photos;
-      "
+      - "4200:4000"
+    restart: unless-stopped
+#  minio:
+#    image: minio/minio
+#    hostname: "minio"
+#    volumes:
+#      - ./minio:/minio_files
+#    env_file:
+#      - backend/.envs/minio.env
+#    command: 'minio server /minio_files --console-address ":9001"'
+#    ports:
+#      - 9000:9000
+#      - 9001:9001
+#
+#  createbuckets:
+#    image: minio/mc
+#    depends_on:
+#      - minio
+#    env_file:
+#      - backend/.envs/minio.env
+#    entrypoint: >
+#      /bin/sh -c "
+#      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+#      /usr/bin/mc mb --quiet myminio/photos;
+#      /usr/bin/mc policy set none myminio/photos;
+#      "
 volumes:
   postgres_data:

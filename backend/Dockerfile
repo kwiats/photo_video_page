@@ -7,8 +7,9 @@ WORKDIR /src
 
 COPY backend/requirements.txt .
 COPY backend/entrypoint.sh .
+RUN pip install uv
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m uv pip install --no-cache-dir -r requirements.txt
 
 COPY ./backend /src/backend
 
