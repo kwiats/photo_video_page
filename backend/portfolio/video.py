@@ -42,13 +42,15 @@ def compress_video(file_video: str, resolution: str = None, quality: int = None,
                 ffmpeg_input
                 .filter('scale', resolution)
                 .output(output_file, preset=ffmpeg_args['preset'], threads=ffmpeg_args['threads'],
-                        crf=ffmpeg_args.get('crf'), overwrite_output=True)
+                        crf=ffmpeg_args.get('crf'))
+                .overwrite_output()
             )
         else:
             ffmpeg_output = (
                 ffmpeg_input
                 .output(output_file, preset=ffmpeg_args['preset'], threads=ffmpeg_args['threads'],
-                        crf=ffmpeg_args.get('crf'), overwrite_output=True)
+                        crf=ffmpeg_args.get('crf'))
+                .overwrite_output()
             )
 
         out, err = ffmpeg_output.run(capture_stdout=True, capture_stderr=True)
