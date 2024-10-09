@@ -57,7 +57,10 @@ def compress_video(file_video: str, resolution: str = None, quality: int = None,
 
     except ffmpeg.Error as e:
         logger.error(f"Compression error: {e.stderr.decode()}")
-        raise
+        raise e
+    except Exception as e:
+        logger.error(f"An error occurred during compression: {e}")
+        raise e
 
 
 def log_ffmpeg_output(ffmpeg_log: str):
