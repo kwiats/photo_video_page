@@ -25,10 +25,12 @@ class ProcessedMediaFileAdmin(SimpleHistoryAdmin):
     list_display = (
         'uuid',
         'update_date',
-        'name',
+        'status',
+        'resolution',
+        'quality',
     )
     list_filter = ('is_deleted', 'update_date')
-    search_fields = ('name', 'uuid')
+    search_fields = 'uuid'
 
 
 @admin.register(MediaFile)
