@@ -12,7 +12,6 @@ RUN apt-get update && \
     apt-get clean
 
 RUN pip install --upgrade pip && \
-    pip install uv && \
     pip install --no-cache-dir -r requirements.txt
 
 
