@@ -11,9 +11,8 @@ COPY ./frontend /src/frontend
 
 WORKDIR /src/frontend
 
-RUN npm run build --prod
+RUN npm run build
 
-# Tymczasowy krok do sprawdzenia zawartości katalogu dist
 RUN ls -la /src/frontend/dist/portfolio
 
 FROM nginx:alpine
