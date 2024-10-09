@@ -38,9 +38,18 @@ def compress_video(file_video: str, resolution: str = None, quality: int = None,
 
         if resolution:
             logger.info(f"Changing resolution to: {resolution}")
-            ffmpeg_output = ffmpeg_input.filter('scale', resolution).output(output_file, **ffmpeg_args)
+            ffmpeg_output = (
+                ffmpeg_input
+                .filter('scale', resolution)
+                .output(output_file, preset=ffmpeg_args['preset'], threads=ffmpeg_args['threads'],
+                        crf=ffmpeg_args.get('crf'), overwrite_output=True)
+            )
         else:
-            ffmpeg_output = ffmpeg_input.output(output_file, **ffmpeg_args)
+            ffmpeg_output = (
+                ffmpeg_input
+                .output(output_file, preset=ffmpeg_args['preset'], threads=ffmpeg_args['threads'],
+                        crf=ffmpeg_args.get('crf'), overwrite_output=True)
+            )
 
         out, err = ffmpeg_output.run(capture_stdout=True, capture_stderr=True)
 
