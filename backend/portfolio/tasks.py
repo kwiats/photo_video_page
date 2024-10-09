@@ -80,4 +80,3 @@ def compress_video_task(media_file_id, resolution=None, quality=100):
         processed_media_file.is_deleted = True
         processed_media_file.save()
         logger.error(f"Video compression failed for MediaFile ID: {media_file_id}, error: {e}")
-        raise e
