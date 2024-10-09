@@ -113,9 +113,9 @@ class MediaFileView(APIView):
         # Cache key
         cache_key = f"media_{uuid}_res_{resolution}_qual_{quality}"
         cached_file = cache.get(cache_key)
-        if cached_file:
-            logger.info(f"Serving cached file for UUID {uuid} with resolution {resolution} and quality {quality}")
-            return FileResponse(open(cached_file['content'], 'rb'), content_type=cached_file['content_type'])
+        # if cached_file:
+        #     logger.info(f"Serving cached file for UUID {uuid} with resolution {resolution} and quality {quality}")
+        #     return FileResponse(open(cached_file['content'], 'rb'), content_type=cached_file['content_type'])
 
         processed_file = media_file.processedmediafile_set.filter(resolution=resolution, quality=quality).first()
 
