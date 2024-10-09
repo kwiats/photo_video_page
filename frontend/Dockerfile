@@ -6,7 +6,7 @@ RUN npm install -g @angular/cli
 
 COPY frontend/package*.json .
 RUN npm install --legacy-peer-deps
-
+RUN npm install angular2-draggable --save
 COPY ./frontend /src/frontend
 
 WORKDIR /src/frontend
