@@ -1,0 +1,62 @@
+<div class="media-popup-overlay" (click)="closePopup()"></div>
+<div class="media-popup">
+    <div class="media-popup-header">
+        <h2>Media Gallery</h2>
+        <button class="close-btn" (click)="closePopup()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <div class="media-grid">
+        <div *ngFor="let item of mediaItems" class="media-item">
+
+            <img *ngIf="item.type === 'image'" [src]="getUrl(item.url)" [alt]="item.name"
+                 (click)="openMediaViewer(item)">
+            <div *ngIf="item.type === 'video'" class="video-thumbnail" (click)="openMediaViewer(item)">
+                <img [src]="item.thumbnailUrl" [alt]="item.name">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+            </div>
+            <div class="checkbox-wrapper">
+                <input type="checkbox" [id]="'checkbox-' + item.pk" [(ngModel)]="item.selected"
+                       (change)="updateSelectedItems(item)">
+                <label [for]="'checkbox-' + item.pk"></label>
+            </div>
+            <p class="media-name">{{ item.name }}</p>
+        </div>
+    </div>
+
+    <div *ngIf="selectedItems.length > 0" class="action-buttons">
+        <ng-container *ngIf="multiple; else singleSelection">
+            <button class="delete-btn" (click)="deleteSelectedItems()">Usuń ({{ selectedItems.length }})</button>
+            <button class="add-btn" (click)="addSelectedItems()">Dodaj ({{ selectedItems.length }})</button>
+        </ng-container>
+
+        <ng-template #singleSelection>
+            <button class="delete-btn" [disabled]="true">Usuń</button>
+
+            <button class="add-btn" (click)="addSelectedItems()">Wybierz</button>
+        </ng-template>
+    </div>
+</div>
+
+<div *ngIf="selectedMedia" class="media-viewer">
+    <button class="close-viewer-btn" (click)="closeMediaViewer()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
+    <img *ngIf="selectedMedia.type === 'image'" [src]="getUrl(selectedMedia.url)" [alt]="selectedMedia.name">
+    <video *ngIf="selectedMedia.type === 'video'" controls>
+        <source [src]="getUrl(selectedMedia.url)" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>

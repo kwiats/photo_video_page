@@ -1,2 +1,2 @@
-def upload_to(instance, filename):
-    return f'media/{instance.file_type}/{filename}'
+def content_file_name(instance, filename):
+    return '/'.join(['content', instance.pk, filename])

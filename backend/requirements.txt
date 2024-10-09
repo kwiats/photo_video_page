@@ -7,3 +7,12 @@ django-debug-toolbar
 django-storages
 boto3
 pillow
+django-widget-tweaks
+django-cors-headers
+django-filter
+requests
+django-celery-beat
+django-celery-results
+celery
+redis
+django-redis

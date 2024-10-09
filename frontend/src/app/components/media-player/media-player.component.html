@@ -1,0 +1,6 @@
+<ng-container *ngIf="type === 'video'; else imageTemplate">
+    <video #videoElement [src]="src" autoplay loop muted playsinline [style.width.%]="100" [style.height.%]="100"></video>
+</ng-container>
+<ng-template #imageTemplate>
+    <img [src]="src" [alt]="alt">
+</ng-template>

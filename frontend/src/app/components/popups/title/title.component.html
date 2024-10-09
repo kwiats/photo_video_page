@@ -1,0 +1,24 @@
+<div class="media-popup-overlay" (click)="closePopup()"></div>
+<div class="media-popup">
+    <div class="media-popup-header">
+        <h2 *ngIf="title">Zaaktulizuj tytuł</h2>
+        <h2 *ngIf="!title">Dodaj tytuł</h2>
+        <button class="close-btn" (click)="closePopup()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <div class="media-content">
+        <div  class="media-item">
+            <input [(ngModel)]="title">
+        </div>
+    </div>
+
+    <div class="action-buttons">
+        <button class="add-btn" (click)="saveTitle()">Zapisz</button>
+    </div>
+</div>

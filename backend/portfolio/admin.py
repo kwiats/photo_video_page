@@ -4,7 +4,19 @@ from django.urls import reverse
 from django.utils.html import format_html
 from simple_history.admin import SimpleHistoryAdmin
 
-from portfolio.models import MediaFile
+from portfolio.models import MediaFile, MediaPosition
+
+
+@admin.register(MediaPosition)
+class MediaPositionAdmin(SimpleHistoryAdmin):
+    list_display = (
+        'uuid',
+        'update_date',
+        'name',
+
+    )
+    list_filter = ('is_deleted', 'update_date')
+    search_fields = ('name', 'uuid')
 
 
 @admin.register(MediaFile)

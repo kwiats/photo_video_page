@@ -1,0 +1,74 @@
+.page-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-size: cover;
+  color: white;
+
+  h1 {
+    margin: 20px;
+    font-size: 3em;
+    padding: 10px;
+  }
+
+  .images-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .image-item {
+    position: absolute;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .resize-handle {
+      width: 10px;
+      height: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      cursor: se-resize;
+    }
+  }
+}
+
+.media-controls {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  background-color: #333;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+
+  button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+
+    &:hover {
+      color: #ff0000; /* Red color on hover for example */
+    }
+
+    i {
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+  }
+}

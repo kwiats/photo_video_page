@@ -1,0 +1,115 @@
+{
+  "hash": "a96ce7f7",
+  "configHash": "1b5e4795",
+  "lockfileHash": "fdf0ac3e",
+  "browserHash": "3de3da1a",
+  "optimized": {
+    "@angular/common": {
+      "src": "../../../../../node_modules/@angular/common/fesm2022/common.mjs",
+      "file": "@angular_common.js",
+      "fileHash": "d9bbfff1",
+      "needsInterop": false
+    },
+    "@angular/common/http": {
+      "src": "../../../../../node_modules/@angular/common/fesm2022/http.mjs",
+      "file": "@angular_common_http.js",
+      "fileHash": "65d331e7",
+      "needsInterop": false
+    },
+    "@angular/core": {
+      "src": "../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "f845742e",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "8dba11d6",
+      "needsInterop": false
+    },
+    "@angular/router": {
+      "src": "../../../../../node_modules/@angular/router/fesm2022/router.mjs",
+      "file": "@angular_router.js",
+      "fileHash": "3902b3c7",
+      "needsInterop": false
+    },
+    "angular2-draggable": {
+      "src": "../../../../../node_modules/angular2-draggable/fesm2022/angular2-draggable.mjs",
+      "file": "angular2-draggable.js",
+      "fileHash": "863fc85e",
+      "needsInterop": false
+    },
+    "ngx-image-cropper": {
+      "src": "../../../../../node_modules/ngx-image-cropper/fesm2020/ngx-image-cropper.mjs",
+      "file": "ngx-image-cropper.js",
+      "fileHash": "d3506825",
+      "needsInterop": false
+    },
+    "@fortawesome/free-solid-svg-icons": {
+      "src": "../../../../../node_modules/@fortawesome/free-solid-svg-icons/index.mjs",
+      "file": "@fortawesome_free-solid-svg-icons.js",
+      "fileHash": "626ee64c",
+      "needsInterop": false
+    },
+    "@fortawesome/angular-fontawesome": {
+      "src": "../../../../../node_modules/@fortawesome/angular-fontawesome/fesm2022/angular-fontawesome.mjs",
+      "file": "@fortawesome_angular-fontawesome.js",
+      "fileHash": "c36bdd88",
+      "needsInterop": false
+    },
+    "@angular/forms": {
+      "src": "../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
+      "file": "@angular_forms.js",
+      "fileHash": "021e64e6",
+      "needsInterop": false
+    },
+    "rxjs": {
+      "src": "../../../../../node_modules/rxjs/dist/esm5/index.js",
+      "file": "rxjs.js",
+      "fileHash": "6bbb87ed",
+      "needsInterop": false
+    },
+    "jwt-decode": {
+      "src": "../../../../../node_modules/jwt-decode/build/esm/index.js",
+      "file": "jwt-decode.js",
+      "fileHash": "b8e93510",
+      "needsInterop": false
+    },
+    "@angular/animations": {
+      "src": "../../../../../node_modules/@angular/animations/fesm2022/animations.mjs",
+      "file": "@angular_animations.js",
+      "fileHash": "04df469a",
+      "needsInterop": false
+    },
+    "@angular/platform-browser/animations": {
+      "src": "../../../../../node_modules/@angular/platform-browser/fesm2022/animations.mjs",
+      "file": "@angular_platform-browser_animations.js",
+      "fileHash": "a0a9bc2e",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-VYDH2YM3": {
+      "file": "chunk-VYDH2YM3.js"
+    },
+    "chunk-5GY5EIQK": {
+      "file": "chunk-5GY5EIQK.js"
+    },
+    "chunk-MRSCLPDQ": {
+      "file": "chunk-MRSCLPDQ.js"
+    },
+    "chunk-YFBLGLTJ": {
+      "file": "chunk-YFBLGLTJ.js"
+    },
+    "chunk-G3HRGKO5": {
+      "file": "chunk-G3HRGKO5.js"
+    },
+    "chunk-4J25ECOH": {
+      "file": "chunk-4J25ECOH.js"
+    },
+    "chunk-J4B6MK7R": {
+      "file": "chunk-J4B6MK7R.js"
+    }
+  }
+}

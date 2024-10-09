@@ -1,0 +1,10 @@
+<div class="toolbar-toggle" [class.open]="toolbarOpen" (click)="toggleToolbar()">
+    &#9664;
+</div>
+
+<div class="toolbar" [class.open]="toolbarOpen">
+    <button (click)="callback(option.callback)" *ngFor="let option of toolbarOptions">
+        <fa-icon [icon]="option.icon"></fa-icon>
+        {{ option.label }}
+    </button>
+</div>

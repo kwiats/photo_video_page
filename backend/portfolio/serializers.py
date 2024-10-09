@@ -1,15 +1,24 @@
 from django.urls import reverse
 from rest_framework import serializers
 
-from portfolio.models import MediaFile
+from common.serializers import CommonSerializer
+from portfolio.models import MediaFile, MediaPosition
 
 
-class MediaFileSerializer(serializers.ModelSerializer):
+class MediaFileSerializer(CommonSerializer):
     file = serializers.SerializerMethodField()
+    fileType = serializers.CharField(source='file_type')
 
     class Meta:
         model = MediaFile
-        fields = ['pk', 'title', 'file_type', 'file', 'create_date', 'update_date', 'is_deleted']
+        fields = ['pk', 'title', 'fileType', 'file', 'thumbnail', 'createDate', 'updateDate', 'isDeleted']
 
     def get_file(self, obj):
         return reverse('image-resize', kwargs={'uuid': obj.pk})
+
+
+class MediaPositionSerializer(CommonSerializer):
+    class Meta:
+        model = MediaPosition
+        fields = '__all__'
+        read_only_fields = ['slug']

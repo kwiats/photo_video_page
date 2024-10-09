@@ -1,0 +1,53 @@
+<app-popup-upload *ngIf="showUploadPopup" (close)="closeUploadPopup()"/>
+<app-popup-browser *ngIf="showBrowserPopup" (close)="closeBrowserPopup()" [mediaItems]="medias" [multiple]="multiSelect" (select)="browserSelected($event)"/>
+<app-popup-title *ngIf="showTitlePopup" (close)="closeTitlePopup()" [title]="config.title?.text" (changedTitle)="changeTitle($event)" />
+<app-toolbar [toolbarOptions]="toolbarOptions" (toolbarToggled)="toolbarToggled($event)"/>
+
+<div *ngIf="config" class="page-container" [ngStyle]="{
+  'background-image': 'url(' + getUrl(config.backgroundUrl) + ')',
+  'background-repeat': config.backgroundRepeat ? 'repeat' : 'no-repeat'
+}">
+
+    <h1 *ngIf="config.textVisible && config.title" [routerLink]="['/']"
+        ngDraggable="image"
+        (endDrag)="onDragEnd($event, config.title)"
+        [ngStyle]="{
+        'background-image': config.title?.backgroundUrl ? 'url(' + getUrl(config.title?.backgroundUrl) + ')' : 'none',
+        'background-color': config.title.backgroundColor || 'transparent',
+        'left.px': config.title.x,
+        'top.px': config.title.y,
+        'font-size': config.title.size,
+        'opacity': config.title.opacity,
+        'font-family': config.title.fontFamily,
+        'font-weight': config.title.fontWeight,
+        'color': config.title.color,
+        'position': 'absolute'
+      }">
+        {{ config.title.text }}
+    </h1>
+    <div class="images-wrapper">
+        <div *ngFor="let media of config.media" class="image-item"
+             ngDraggable="media"
+             (endDrag)="onDragEnd($event, media)"
+             [ngStyle]="{
+           'left.px': media.x,
+           'top.px': media.y,
+           'width.px': media.width,
+           'height.px': media.height,
+           'opacity': media.opacity,
+           'position': 'absolute'
+         }"
+             (click)="onSelectMedia(media)">
+            <div class="media-controls" *ngIf="openToolbar">
+                <button (click)="deleteMedia(media)">
+                    <fa-icon [icon]="faTrash"></fa-icon>
+                </button>
+            </div>
+
+            <app-media-player [alt]="media.pk" [src]="getUrl(media.src)" [type]="media.type || 'photo'"/>
+            <div class="resize-handle" (mousedown)="startResizing($event, media)"></div>
+
+        </div>
+    </div>
+
+</div>
