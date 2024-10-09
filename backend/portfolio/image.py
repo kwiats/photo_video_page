@@ -6,8 +6,7 @@ from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import UploadedFile
 
 
-def process_image(image_file: str, resolution: Optional[Tuple[int, int]] = None,
-                  quality: int = 75) -> ContentFile:
+def process_image(image_file, resolution: Optional[Tuple[int, int]] = None, quality: int = 75, output_path: str = None) -> str:
     img = Image.open(image_file)
 
     if img.mode == 'RGBA':
@@ -16,9 +15,10 @@ def process_image(image_file: str, resolution: Optional[Tuple[int, int]] = None,
     if resolution:
         img = img.resize(resolution, Image.Resampling.LANCZOS)
 
-    output = BytesIO()
-    img.save(output, format='WEBP', quality=quality)
-    output.seek(0)
+    if output_path is None:
+        base_name = str(image_file.name).rsplit('.', 1)[0].replace(' ', '_')
+        output_path = f"{base_name}.webp"
 
-    new_filename = image_file.name.rsplit('.', 1)[0] + '.webp'
-    return ContentFile(output.read(), name=new_filename)
+    img.save(output_path, format='WEBP', quality=quality)
+
+    return output_path

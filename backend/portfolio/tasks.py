@@ -3,6 +3,8 @@ import os
 from uuid import UUID
 
 from celery import shared_task
+from django.core.files import File
+from django.db import transaction
 
 from portfolio.image import process_image
 from portfolio.models import MediaFile, ProcessedMediaFile
@@ -50,7 +52,6 @@ def compress_video_task(media_file_id, resolution=None, quality=100):
         logger.info(
             f"Processed video already exists for MediaFile ID: {media_file_id}, resolution: {resolution}, quality: {quality}")
         return
-
     processed_media_file = ProcessedMediaFile.objects.create(
         media_file=media_file,
         resolution=resolution,
@@ -62,18 +63,18 @@ def compress_video_task(media_file_id, resolution=None, quality=100):
         original_file_path = media_file.file.path
 
         if media_file.file_type == 'video':
-            compressed_file = compress_video(original_file_path, resolution=resolution, quality=quality,
+            compressed_file_path = compress_video(original_file_path, resolution=resolution, quality=quality,
                                                   instance=media_file)
         else:
-            compressed_file = process_image(media_file.file, resolution=resolution, quality=quality)
+            compressed_file_path = process_image(media_file.file, resolution=resolution, quality=quality)
 
-        processed_media_file.processed_file.save(compressed_file.name,
-                                                 compressed_file)
+        with open(compressed_file_path, 'rb') as f:
+            processed_media_file.processed_file.save(os.path.basename(compressed_file_path), File(f))
 
         processed_media_file.status = 'ready'
         processed_media_file.save()
 
-        logger.info(f"Video compression successful for MediaFile ID: {media_file_id}, saved as {compressed_file}")
+        logger.info(f"Video compression successful for MediaFile ID: {media_file_id}, saved as {compressed_file_path}")
 
     except Exception as e:
         processed_media_file.status = 'failed'

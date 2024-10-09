@@ -9,13 +9,13 @@ from django.core.files.base import ContentFile
 logger = logging.getLogger(__name__)
 
 
-def compress_video(file_video: str, resolution: str = None, quality: int = None, instance=None) -> ContentFile:
+def compress_video(file_video: str, resolution: str = None, quality: int = None, instance=None) -> str:
     if not os.path.isfile(file_video):
         logger.error(f"File {file_video} not found.")
         raise FileNotFoundError(f"File {file_video} not found.")
 
     if instance is None or not hasattr(instance, 'pk'):
-        logger.error(f"Instance must be provided with a valid 'pk' attribute.")
+        logger.error("Instance must be provided with a valid 'pk' attribute.")
         raise ValueError("Instance must be provided with a valid 'pk' attribute.")
 
     file_name = os.path.basename(file_video)
@@ -50,10 +50,7 @@ def compress_video(file_video: str, resolution: str = None, quality: int = None,
         duration = end_time - start_time
         logger.info(f"Compression completed in {duration:.2f} seconds. New file saved at: {output_file}")
 
-        with open(output_file, 'rb') as f:
-            file_data = f.read()
-
-        return ContentFile(file_data, name=f"compressed_{file_name}")
+        return output_file  # Return the path to the compressed file
 
     except ffmpeg.Error as e:
         logger.error(f"Compression error: {e.stderr.decode()}")

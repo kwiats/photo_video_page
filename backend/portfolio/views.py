@@ -116,18 +116,23 @@ class MediaFileView(APIView):
         # if cached_file:
         #     logger.info(f"Serving cached file for UUID {uuid} with resolution {resolution} and quality {quality}")
         #     return FileResponse(open(cached_file['content'], 'rb'), content_type=cached_file['content_type'])
-
         processed_file = media_file.processedmediafile_set.filter(resolution=resolution, quality=quality).first()
+
 
         if not processed_file:
             logger.info(f"File not processed yet for UUID {uuid}. Starting compression.")
-            compress_media_runner(media_file.pk, resolution, quality)
+            try:
+                compress_media_runner(media_file.pk, resolution, quality)
+            except Exception as e:
+                logger.error(f"An error occurred while fetching processed file for UUID {uuid}: {e}")
+                return JsonResponse({"error": "An error occurred while fetching processed file"},
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             return JsonResponse({"message": "The media file is being processed. Please try again later."},
                                 status=status.HTTP_202_ACCEPTED)
 
         content_type = 'video/mp4' if media_file.file_type == 'video' else 'image/jpeg'
 
-        file_path = settings.BASE_DIR / processed_file.processed_file.name
+        file_path = 'media/' + processed_file.processed_file.name
 
         logger.info(f"Serving processed file for UUID {uuid} from path: {file_path}")
 
