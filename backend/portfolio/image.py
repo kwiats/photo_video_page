@@ -7,7 +7,7 @@ from django.core.files.uploadedfile import UploadedFile
 
 
 def process_image(image_file, resolution: Optional[Tuple[int, int]] = None, quality: int = 75, output_path: str = None) -> str:
-    img = Image.open(image_file)
+    img = Image.open(image_file.path)
 
     if img.mode == 'RGBA':
         img = img.convert('RGB')

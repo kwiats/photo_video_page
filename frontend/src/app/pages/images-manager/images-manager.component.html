@@ -1,6 +1,8 @@
 <app-popup-upload *ngIf="showUploadPopup" (close)="closeUploadPopup()"/>
-<app-popup-browser *ngIf="showBrowserPopup" (close)="closeBrowserPopup()" [mediaItems]="medias" [multiple]="multiSelect" (select)="browserSelected($event)"/>
-<app-popup-title *ngIf="showTitlePopup" (close)="closeTitlePopup()" [title]="config.title?.text" (changedTitle)="changeTitle($event)" />
+<app-popup-browser *ngIf="showBrowserPopup" (close)="closeBrowserPopup()" [mediaItems]="medias" [multiple]="multiSelect"
+                   (select)="browserSelected($event)"/>
+<app-popup-title *ngIf="showTitlePopup" (close)="closeTitlePopup()" [title]="config.title?.text"
+                 (changedTitle)="changeTitle($event)"/>
 <app-toolbar [toolbarOptions]="toolbarOptions" (toolbarToggled)="toolbarToggled($event)"/>
 
 <div *ngIf="config" class="page-container" [ngStyle]="{
@@ -10,9 +12,9 @@
 
     <h1 *ngIf="config.textVisible && config.title" [routerLink]="['/']"
         ngDraggable="image"
-        (endDrag)="onDragEnd($event, config.title)"
+        (endDrag)="onDragEnd($event, config.title, 'title')"
         [ngStyle]="{
-        'background-image': config.title?.backgroundUrl ? 'url(' + getUrl(config.title?.backgroundUrl) + ')' : 'none',
+        'background-image': config.title.backgroundUrl ? 'url(' + getUrl(config.title.backgroundUrl) + ')' : 'none',
         'background-color': config.title.backgroundColor || 'transparent',
         'left.px': config.title.x,
         'top.px': config.title.y,
@@ -28,16 +30,12 @@
     <div class="images-wrapper">
         <div *ngFor="let media of config.media" class="image-item"
              ngDraggable="media"
-             (endDrag)="onDragEnd($event, media)"
-             [ngStyle]="{
-           'left.px': media.x,
-           'top.px': media.y,
-           'width.px': media.width,
-           'height.px': media.height,
-           'opacity': media.opacity,
-           'position': 'absolute'
-         }"
+             [position]="{x: media.x, y:media.y}"
+             (movingOffset)="onDrag($event, media)"
+             (endOffset)="onDragEnd($event, media, 'media')"
+             [ngStyle]="getMediaStyle(media)"
              (click)="onSelectMedia(media)">
+
             <div class="media-controls" *ngIf="openToolbar">
                 <button (click)="deleteMedia(media)">
                     <fa-icon [icon]="faTrash"></fa-icon>

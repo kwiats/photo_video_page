@@ -1,60 +1,62 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+import {ActivatedRoute} from "@angular/router";
+import {ApiService} from "../../core/services/api.service";
+import {LoaderService} from "../../core/services/loader.service";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-  isDown = false;
-  startX = 0;
-  scrollLeft = 0;
+    isDown = false;
+    startX = 0;
+    scrollLeft = 0;
+    images: any[] = [];
+    currentYear: number = new Date().getFullYear();
 
-  images = [
-    {
-      src: 'https://placehold.co/600x400',
-      title: 'Title 1',
-      routerLink: '/route1'
-    },
-    {
-      src: 'https://placehold.co/500x400',
-      title: 'Title 2',
-      routerLink: '/route2'
-    },
-    {
-      src: 'https://placehold.co/600x700',
-      title: 'Title 3',
-      routerLink: '/route3'
-    },
-    {
-      src: 'https://placehold.co/100x400',
-      title: 'Title 4',
-      routerLink: '/route4'
+    constructor(private route: ActivatedRoute, private apiService: ApiService,
+                private loaderService: LoaderService) {
     }
-    // Add more images as needed
-  ];
 
-  onMouseDown(event: MouseEvent) {
-    this.isDown = true;
-    const slider = event.currentTarget as HTMLElement;
-    this.startX = event.pageX - slider.offsetLeft;
-    this.scrollLeft = slider.scrollLeft;
-  }
+    ngOnInit(): void {
+        this.loadOptions()
+    }
 
-  onMouseLeave() {
-    this.isDown = false;
-  }
+    loadOptions() {
+        this.loaderService.show();
+        this.apiService.fetchAllLayouts().subscribe((data) => {
+            console.log(data)
+            this.images = data.results;
+        }, (error) => {
+            console.error('Error fetching data:', error);
+            this.loaderService.hide();
+        }, () => {
+            this.loaderService.hide();
+        })
+    }
 
-  onMouseUp() {
-    this.isDown = false;
-  }
+    onMouseDown(event: MouseEvent) {
+        this.isDown = true;
+        const slider = event.currentTarget as HTMLElement;
+        this.startX = event.pageX - slider.offsetLeft;
+        this.scrollLeft = slider.scrollLeft;
+    }
 
-  onMouseMove(event: MouseEvent) {
-    if (!this.isDown) return;
-    event.preventDefault();
-    const slider = event.currentTarget as HTMLElement;
-    const x = event.pageX - slider.offsetLeft;
-    const walk = (x - this.startX) * 2; // Scroll-fast
-    slider.scrollLeft = this.scrollLeft - walk;
-  }
+    onMouseLeave() {
+        this.isDown = false;
+    }
+
+    onMouseUp() {
+        this.isDown = false;
+    }
+
+    onMouseMove(event: MouseEvent) {
+        if (!this.isDown) return;
+        event.preventDefault();
+        const slider = event.currentTarget as HTMLElement;
+        const x = event.pageX - slider.offsetLeft;
+        const walk = (x - this.startX) * 2; // Scroll-fast
+        slider.scrollLeft = this.scrollLeft - walk;
+    }
 }

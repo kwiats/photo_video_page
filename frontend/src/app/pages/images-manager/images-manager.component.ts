@@ -7,6 +7,7 @@ import {ApiService} from "../../core/services/api.service";
 import {MediaResponse} from "../../core/models/response.model";
 import {LoaderService} from "../../core/services/loader.service";
 import {environment} from "../../../environments/environment";
+import {IPosition} from "angular2-draggable";
 
 
 @Component({
@@ -79,6 +80,7 @@ export class ImagesManagerComponent implements OnInit {
     ]
     medias: MediaItem[] = [];
     multiSelect: boolean = true;
+    private layoutName: string = '';
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -86,23 +88,27 @@ export class ImagesManagerComponent implements OnInit {
         private apiService: ApiService,
         private loaderService: LoaderService
     ) {
+        this.layoutName = this.route.snapshot.params['title'];
     }
 
 
     ngOnInit(): void {
-        console.log('ngOnInit')
-        this.initLoadData();
+        if (this.layoutName) {
+            this.initLoadData();
+        } else {
+            this.layoutName = this.route.snapshot.params['title'];
+            this.initLoadData()
+        }
     }
 
     initLoadData() {
         this.loaderService.show();
         forkJoin({
             images: this.apiService.getAllImages(),
-            layout: this.apiService.fetchLayout('example laylout')
+            page: this.apiService.fetchLayout(this.layoutName)
         }).subscribe((data) => {
             this.medias = data.images.results.map(this.convertMediaResponseToMediaItem);
-            this.config = JSON.parse(data.layout.results[0].layout);
-            console.log(data.layout)
+            this.config = JSON.parse(data.page.layout);
             this.cdr.detectChanges();
         }, (error) => {
             console.error('Error fetching data:', error);
@@ -136,83 +142,51 @@ export class ImagesManagerComponent implements OnInit {
         };
     }
 
-    exmplConfig() {
-        this.route.paramMap.subscribe(params => {
-            const title = params.get('title');
-            if (title) {
-                this.config = {
-                    "title": {
-                        "text": "Example Title",
-                        "backgroundUrl": "assets/images/Print.jpg",
-                        "backgroundColor": "#ff0000",
-                        "x": 100,
-                        "y": 50,
-                        "size": "48px",
-                        "opacity": 0.8,
-                        "fontFamily": "Arial, sans-serif",
-                        "fontWeight": "bold",
-                        "color": "#ffffff"
-                    },
-                    "media": [
-                        {
-                            "pk": "1",
-                            "src": "assets/images/example.mp4",
-                            "type": "video",
-                            "x": 50,
-                            "y": 150,
-                            "width": 300,
-                            "height": 200,
-                            "opacity": 0.9
-                        },
-                        {
-                            "pk": "2",
-                            "src": "assets/images/Print.jpg",
-                            "x": 200,
-                            "y": 450,
-                            "width": 400,
-                            "height": 300,
-                            "opacity": 0.7
-                        }
-                    ],
-                    "backgroundUrl": "assets/images/Print.jpg",
-                    "backgroundRepeat": true,
-                    "textVisible": true
-                }
-                // this.fetchPageConfig(title).subscribe(config => {
-                //   this.config = config;
-                // });
-            }
-        });
+    onDrag(event: IPosition, media: MediaConfig,) {
+        const centerX = event.x + event.x / 2;
+        const centerY = event.y;
+
     }
 
+    onDragEnd(event: any, item: MediaConfig | TitleConfig, type: string) {
+        const centerX = event.x;
+        const centerY = event.y;
 
-    onDragEnd(event: any, item: MediaConfig | TitleConfig) {
-        item.x = event.x;
-        item.y = event.y;
+        switch (type) {
+            case 'media':
+                const index = this.config.media.findIndex(mediaItem => mediaItem === item);
+                if (index !== -1) {
+                    this.config.media[index].x = centerX;
+                    this.config.media[index].y = centerY;
+                }
+                break;
+            case 'title':
+                if (this.config && this.config.title) {
+                    this.config.title.x = centerX;
+                    this.config.title.y = centerY;
+                }
+                break;
+        }
     }
 
     async onSave() {
         if (this.config) {
-            console.log(JSON.stringify(this.config))
             let data = {
-                name: 'example laylout',
+                name: this.layoutName,
                 layout: JSON.stringify(this.config)
             }
+            this.loaderService.show();
             try {
-
                 await this.apiService.uploadLayout(data).toPromise()
+                this.loaderService.hide();
             } catch (e) {
                 console.log(e)
+                this.loaderService.hide();
             }
 
         }
     }
 
-    onCropImage(event: any) {
-        if (this.selectedImage) {
-            this.selectedImage.src = event.base64;
-        }
-    }
 
     onSelectMedia(image: MediaConfig) {
         this.selectedImage = image;
@@ -242,7 +216,6 @@ export class ImagesManagerComponent implements OnInit {
             this.resizingItem.height = this.initialHeight + deltaY;
             this.resizingItem.x = this.initialX + deltaX / 2
             this.resizingItem.y = this.initialY + deltaY / 2
-            console.log(this.resizingItem.x, this.resizingItem.y, this.resizingItem.width, this.resizingItem.height)
         }
     }
 
@@ -257,7 +230,6 @@ export class ImagesManagerComponent implements OnInit {
 
     toolbarToggled($event: boolean) {
         this.openToolbar = $event;
-        console.log($event)
     }
 
     deleteMedia(media: MediaConfig) {
@@ -292,7 +264,6 @@ export class ImagesManagerComponent implements OnInit {
     browserSelected(items: any) {
         switch (items.action) {
             case 'deleted':
-                console.log('deleted')
                 break;
             case 'selected':
                 if (this.multiSelect) {
@@ -310,11 +281,10 @@ export class ImagesManagerComponent implements OnInit {
                 }
                 break;
             case 'closed':
-                console.log('closed')
+
                 break
         }
         this.cdr.detectChanges();
-        console.log(this.config)
 
     }
 
@@ -366,5 +336,16 @@ export class ImagesManagerComponent implements OnInit {
 
     closeTitlePopup() {
         this.showTitlePopup = false
+    }
+
+
+    getMediaStyle(media: MediaConfig) {
+        return {
+            'width.px': media.width,
+            'height.px': media.height,
+            'opacity': 1,
+            'position': 'absolute',
+            'transform': `translate(${media.x}px, ${media.y}px)`
+        };
     }
 }

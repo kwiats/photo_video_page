@@ -9,11 +9,17 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-import os
-from pathlib import Path
 import logging
+import os
 from logging.handlers import TimedRotatingFileHandler
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv('envs/django.env')
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -180,7 +186,6 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_S3_REGION_NAME = None
 AWS_S3_USE_SSL = False
 AWS_S3_VERIFY = False
-
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

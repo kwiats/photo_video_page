@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpService} from "./http.service";
 import {Observable} from "rxjs";
-import {PageConfig} from "../models/media.model";
 import {ApiResponse, MediaPositionResponse, MediaResponse} from "../models/response.model";
 
 @Injectable({
@@ -18,12 +17,17 @@ export class ApiService {
         return this.httpClient.get<ApiResponse<MediaResponse>>('images/')
     }
 
-    fetchLayout(title: string): Observable<ApiResponse<MediaPositionResponse>> {
-        return this.httpClient.get<ApiResponse<MediaPositionResponse>>(`media-positions/?name=${title}`);
+    fetchLayout(title: string = 'default'): Observable<MediaPositionResponse> {
+        return this.httpClient.get<MediaPositionResponse>(`media-positions/${title}/`);
+    }
+
+    fetchAllLayouts(): Observable<ApiResponse<MediaPositionResponse>> {
+        return this.httpClient.get<ApiResponse<MediaPositionResponse>>(`media-positions/`);
     }
 
     uploadLayout(data: any): Observable<any> {
-        return this.httpClient.post('media-positions/', data);
+        const slug = data['name']
+        return this.httpClient.put(`media-positions/${slug}/`, data);
     }
 
     uploadMedias(data: FormData): Observable<any> {

@@ -4,9 +4,8 @@ import os
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
 from django.http import JsonResponse, HttpResponseRedirect, FileResponse
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, generics, viewsets
@@ -27,6 +26,12 @@ class MediaPositionViewSet(viewsets.ModelViewSet):
     serializer_class = MediaPositionSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = MediaPositionFilter
+    lookup_field = 'slug'
+
+    def get_object(self):
+        # Override to find the MediaPosition by slug
+        slug = self.kwargs.get('slug')
+        return get_object_or_404(MediaPosition, slug=slug)
 
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -37,6 +42,16 @@ class MediaPositionViewSet(viewsets.ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def update(self, request, *args, **kwargs):
+        data = request.data
+        instance = self.get_object()
+
+        serializer = self.get_serializer(instance, data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
     def recent(self, request):
@@ -82,7 +97,6 @@ class MediaFileView(APIView):
             logger.error(f"Media file with UUID {uuid} not found.")
             return JsonResponse({"error": "Media file not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Sprawdzenie, czy użytkownik jest autoryzowany
         if not request.user.is_authenticated and not media_file.is_public:
             return JsonResponse({"error": "This media file is not public"}, status=status.HTTP_403_FORBIDDEN)
 
@@ -110,16 +124,15 @@ class MediaFileView(APIView):
         else:
             quality = 75
 
-        # Cache key
         cache_key = f"media_{uuid}_res_{resolution}_qual_{quality}"
         cached_file = cache.get(cache_key)
         # if cached_file:
         #     logger.info(f"Serving cached file for UUID {uuid} with resolution {resolution} and quality {quality}")
         #     return FileResponse(open(cached_file['content'], 'rb'), content_type=cached_file['content_type'])
+
         processed_file = media_file.processedmediafile_set.filter(resolution=resolution, quality=quality).first()
-
-
-        if not processed_file:
+        content_type = 'video/mp4' if media_file.file_type == 'video' else 'image/jpeg'
+        if not processed_file or processed_file.status != 'processed':
             logger.info(f"File not processed yet for UUID {uuid}. Starting compression.")
             try:
                 compress_media_runner(media_file.pk, resolution, quality)
@@ -127,21 +140,16 @@ class MediaFileView(APIView):
                 logger.error(f"An error occurred while fetching processed file for UUID {uuid}: {e}")
                 return JsonResponse({"error": "An error occurred while fetching processed file"},
                                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            return JsonResponse({"message": "The media file is being processed. Please try again later."},
-                                status=status.HTTP_202_ACCEPTED)
+            return FileResponse(open(media_file.file.path, 'rb'), content_type=content_type)
 
-        content_type = 'video/mp4' if media_file.file_type == 'video' else 'image/jpeg'
+        logger.info(f"Serving processed file for UUID {uuid} from path: {processed_file.processed_file.name}")
 
-        file_path = 'media/' + processed_file.processed_file.name
-
-        logger.info(f"Serving processed file for UUID {uuid} from path: {file_path}")
-
-        if os.path.exists(file_path):
-            cache.set(cache_key, {'content': file_path, 'content_type': content_type},
+        if os.path.exists(processed_file.processed_file.name):
+            cache.set(cache_key, {'content': processed_file.processed_file.name, 'content_type': content_type},
                       timeout=settings.REDIS_CACHE_TIMEOUT)
-            return FileResponse(open(file_path, 'rb'), content_type=content_type)
+            return FileResponse(open(processed_file.processed_file.name, 'rb'), content_type=content_type)
         else:
-            logger.error(f"Processed file not found for UUID {uuid} at path {file_path}")
+            logger.error(f"Processed file not found for UUID {uuid} at path {processed_file.processed_file.name}")
             return JsonResponse({"error": "Processed file not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -161,21 +169,14 @@ def upload_media(request):
                     elif mime_type.startswith('video'):
                         file_type = 'video'
 
-                file_path = default_storage.save(file.name, ContentFile(file.read()))
+                media_file = MediaFile(
+                    file_type=file_type,
+                    title=file.name
+                )
+                media_file.file = file
+                media_file.save()
 
-                # Sprawdzenie, czy plik istnieje
-                if default_storage.exists(file_path):
-                    media_file = MediaFile(
-                        file=file_path,
-                        file_type=file_type,
-                        title=file.name
-                    )
-                    media_file.save()
-
-                    file_urls.append(media_file)
-                else:
-                    return JsonResponse({'error': f'File could not be saved: {file.name}'}, status=500)
-
+                file_urls.append(media_file)
             except Exception as e:
                 return JsonResponse({'error': f'Error processing file: {file.name}, {str(e)}'}, status=500)
 
