@@ -56,7 +56,7 @@ $accent-color: #d4a5a5;
       background: url('/assets/images/Print.jpg') no-repeat center center;
       background-size: cover;
       z-index: 0;
-      animation: slowVerticalMovement 120s infinite;
+      animation: slowVerticalMovement 120s infinite alternate;
       opacity: 0.8;
     }
   }
